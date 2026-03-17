@@ -17,14 +17,15 @@ jobs:
     timeout-minutes: 360
     steps:
       - name: Free Disk Space
-        run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /opt/hostedtoolcache/CodeQL
-          sudo rm -rf /usr/local/share/boost
-          sudo docker image prune --all --force
-          df -h
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: false
 
       - name: Maximize Storage
         uses: easimon/maximize-build-space@master
@@ -36,6 +37,9 @@ jobs:
           remove-haskell: 'true'
           remove-codeql: 'true'
           remove-docker-images: 'true'
+
+      - name: Check Disk Space
+        run: df -h
 
       - name: Install Dependencies
         run: |
@@ -93,15 +97,14 @@ jobs:
             --prune \
             --force-sync
 
-      - name: Check Disk Space After Sync
+      - name: Check Disk After Sync
         run: df -h
 
       - name: Setup Vendor
         run: |
           mkdir -p ~/android/lineage/vendor/samsung/a045f
           cat > ~/android/lineage/vendor/samsung/a045f/a045f-vendor.mk << 'EOF'
-          # Vendor makefile placeholder
-          # Actual vendor files akan diambil dari device tree prebuilt
+          # Vendor placeholder
           EOF
 
       - name: Build ROM
