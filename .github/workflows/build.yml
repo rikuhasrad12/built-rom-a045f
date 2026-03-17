@@ -1,5 +1,4 @@
 name: Build ROM A045F
-
 on:
   workflow_dispatch:
     inputs:
@@ -12,12 +11,10 @@ on:
           - userdebug
           - user
           - eng
-
 jobs:
   build:
     runs-on: ubuntu-22.04
     timeout-minutes: 360
-
     steps:
       - name: Maximize Storage
         uses: easimon/maximize-build-space@master
@@ -68,18 +65,10 @@ jobs:
           cat > ~/android/lineage/.repo/local_manifests/roomservice.xml << 'EOF'
           <?xml version="1.0" encoding="UTF-8"?>
           <manifest>
-            <project name="GITHUB_USERNAME/android_device_samsung_a045f"
+            <project name="rikuhasrad12/android_device_samsung_a045f"
                      path="device/samsung/a045f"
                      remote="github"
-                     revision="lineage-21.0" />
-            <project name="GITHUB_USERNAME/android_kernel_samsung_mt6765"
-                     path="kernel/samsung/mt6765"
-                     remote="github"
-                     revision="lineage-21.0" />
-            <project name="GITHUB_USERNAME/android_vendor_samsung_a045f"
-                     path="vendor/samsung/a045f"
-                     remote="github"
-                     revision="lineage-21.0" />
+                     revision="main" />
           </manifest>
           EOF
 
@@ -92,6 +81,12 @@ jobs:
             --optimized-fetch \
             --prune \
             --force-sync
+
+      - name: Copy Vendor Files
+        run: |
+          mkdir -p ~/android/lineage/vendor/samsung/a045f
+          cp -r /mnt/c/rom-extract/vendor/* \
+            ~/android/lineage/vendor/samsung/a045f/
 
       - name: Build ROM
         run: |
